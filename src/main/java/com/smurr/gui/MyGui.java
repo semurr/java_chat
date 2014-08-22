@@ -3,6 +3,7 @@ package com.smurr.gui;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.io.IOException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -10,10 +11,15 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 
+import com.smurr.core.Chat;
+import com.smurr.gui.action.ButtonAction;
 import com.smurr.rabbit.MessageListener;
 import com.smurr.rabbit.MessageSender;
+import com.smurr.rabbit.consumer.ChatDisplay;
 
 public class MyGui extends JFrame {
+
+	Chat			chat;
 
 	// gui components
 	JPanel			jPanel;
@@ -24,16 +30,17 @@ public class MyGui extends JFrame {
 	JScrollPane		textRecieveScroll;
 	JScrollPane		textSendScroll;
 
-	JButton			sendMessageButton;
+	JButton			sendMessageButton;	
 
-	// rabbit components
-	MessageListener	messageListener;
-	MessageSender	messageSender;
+	public MyGui(Chat chat) {
 
-	public MyGui() {
+		this.chat = chat;
+
+	}
+
+	public void guiSetup() {
 
 		// set layout
-
 		this.setLayout(new GridBagLayout());
 
 		GridBagConstraints c = new GridBagConstraints();
@@ -68,18 +75,34 @@ public class MyGui extends JFrame {
 		c.gridy = 1;
 		this.add(sendMessageButton, c);
 
-		// add actions
-		// sendMessageButton.addActionListener(l);
-
-	}
-
-	public void setDimenision() {
-
 		this.setTitle("JChat");
 		this.setSize(500, 600);
 		this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		this.setVisible(true);
-
+		
+		//setup listener objects
+		setupListeners();
+	}	
+	
+	private void setupListeners(){
+		
+		
+		//send button listener
+		sendMessageButton.addActionListener(new ButtonAction(messageBoxSend, chat));
+		
+		ChatDisplay chatDisplay = new ChatDisplay(messageBoxRecieve);
+		
+		
+		//chat recieve listener
+		try {
+			chat.setListener(chatDisplay);
+		} catch (IOException e) {			
+			e.printStackTrace();
+			System.out.println("Error when setting up chat listener");
+		}
+		
+		
+		
 	}
 
 }

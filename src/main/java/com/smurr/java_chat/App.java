@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Scanner;
 
 import com.smurr.core.Chat;
+import com.smurr.gui.MyGui;
 import com.smurr.rabbit.MessageListener;
 import com.smurr.rabbit.MessageSender;
 import com.smurr.rabbit.consumer.ChatDisplay;
@@ -17,21 +18,11 @@ public class App {
 		System.out.println("Hello World!");
 		
 		Chat chat = new Chat();
-		
 		chat.connect();
 		
-		chat.setListener(new ChatDisplay());
+		MyGui myGui = new MyGui(chat);		
+		myGui.guiSetup();	
 		
-		
-
-		
-		String line;
-		Scanner scanner = new Scanner(System.in);
-
-		while (!(line = scanner.nextLine()).equals("quit")) {
-
-			chat.sendMessage(line);
-		}
 
 		System.out.println("GoodBye World!");
 	}
