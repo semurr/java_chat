@@ -5,6 +5,7 @@ import java.io.IOException;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.QueueingConsumer;
 import com.smurr.rabbit.consumer.ChatMessageConsumer;
+import com.smurr.rabbit.consumer.Listen;
 
 public class MessageListener extends RabbitConnection {
 
@@ -14,7 +15,7 @@ public class MessageListener extends RabbitConnection {
 
 	Channel			channel;
 
-	public void createListener() throws IOException {
+	public void createListener(Listen listenAction) throws IOException {
 
 		if (channel == null) {
 			channel = getNewChannel();
@@ -25,7 +26,7 @@ public class MessageListener extends RabbitConnection {
 		queue_name = channel.queueDeclare().getQueue();
 		channel.queueBind(queue_name, EXCHANGE_NAME, "");
 		
-		ChatMessageConsumer consumer = new ChatMessageConsumer(channel);
+		ChatMessageConsumer consumer = new ChatMessageConsumer(channel, listenAction);
 		
 		channel.basicConsume(queue_name, false, consumer);		
 	}
