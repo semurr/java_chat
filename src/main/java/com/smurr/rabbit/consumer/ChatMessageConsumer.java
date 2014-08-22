@@ -15,25 +15,25 @@ import com.rabbitmq.client.QueueingConsumer.Delivery;
  * 
  */
 public class ChatMessageConsumer extends DefaultConsumer {
+	
+	Listen listenObject;
 
-	public ChatMessageConsumer(Channel channel) {
+	public ChatMessageConsumer(Channel channel, Listen listenObject) {
 		super(channel);
+		this.listenObject = listenObject;
 	}
 
 	@Override
 	public void handleDelivery(String consumerTag, Envelope envelope,
 			AMQP.BasicProperties properties, byte[] body) throws IOException {
+		
+		String recieved = new String(body);
 
 		// create the message
-		StringBuilder stringBuilder = new StringBuilder();
-		stringBuilder.append("[X] Message Receieved = ");
-		stringBuilder.append(new String(body));
+		listenObject.call(recieved);
 
 		// output the message
-		System.out.println(stringBuilder.toString());
-
-		// clearing the buffer
-		stringBuilder.setLength(0);
+		System.out.println("[X] Recieved: " + recieved);		
 	}
 
 }
